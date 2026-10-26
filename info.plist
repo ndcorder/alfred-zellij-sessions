@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>bundleid</key>
+	<string>com.ndcorder.alfred-zellij-sessions</string>
+	<key>category</key>
+	<string>Productivity</string>
+	<key>connections</key>
+	<dict>
+		<key>3F4791F0-1462-4F1C-A45C-51C9F191A875</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>EED2FFBF-4435-48F1-BDB5-7EE40C6592C5</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>93185EC0-C2FA-4BE3-89E8-182C3FEB75B7</string>
+				<key>modifiers</key>
+				<integer>524288</integer>
+				<key>modifiersubtext</key>
+				<string>Kill / delete session</string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>93185EC0-C2FA-4BE3-89E8-182C3FEB75B7</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>F55350D7-B0E4-437D-9B89-2009B9CFD8E2</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+	</dict>
+	<key>createdby</key>
+	<string>Nicolas Corder</string>
+	<key>description</key>
+	<string>Attach, create, kill or delete Zellij sessions in iTerm</string>
+	<key>disabled</key>
+	<false/>
+	<key>name</key>
+	<string>Zellij Sessions</string>
+	<key>objects</key>
+	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>alfredfiltersresults</key>
+				<false/>
+				<key>alfredfiltersresultsmatchmode</key>
+				<integer>0</integer>
+				<key>argumenttrimmode</key>
+				<integer>0</integer>
+				<key>argumenttype</key>
+				<integer>1</integer>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>keyword</key>
+				<string>zj</string>
+				<key>queuedelaycustom</key>
+				<integer>3</integer>
+				<key>queuedelayimmediatelyinitially</key>
+				<true/>
+				<key>queuedelaymode</key>
+				<integer>0</integer>
+				<key>queuemode</key>
+				<integer>2</integer>
+				<key>runningsubtext</key>
+				<string>Listing sessions…</string>
+				<key>script</key>
+				<string>/usr/bin/python3 -B zj.py "$1"</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>subtext</key>
+				<string>Attach, create, kill or delete</string>
+				<key>title</key>
+				<string>Zellij sessions</string>
+				<key>type</key>
+				<integer>0</integer>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.scriptfilter</string>
+			<key>uid</key>
+			<string>3F4791F0-1462-4F1C-A45C-51C9F191A875</string>
+			<key>version</key>
+			<integer>3</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>escaping</key>
+				<integer>0</integer>
+				<key>script</key>
+				<string>{query}</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.terminalcommand</string>
+			<key>uid</key>
+			<string>EED2FFBF-4435-48F1-BDB5-7EE40C6592C5</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>/usr/bin/python3 -B zj.py remove "$zj_state" "$1"</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>93185EC0-C2FA-4BE3-89E8-182C3FEB75B7</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>lastpathcomponent</key>
+				<false/>
+				<key>onlyshowifquerypopulated</key>
+				<true/>
+				<key>removeextension</key>
+				<false/>
+				<key>text</key>
+				<string>{query}</string>
+				<key>title</key>
+				<string>Zellij</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.notification</string>
+			<key>uid</key>
+			<string>F55350D7-B0E4-437D-9B89-2009B9CFD8E2</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+	</array>
+	<key>readme</key>
+	<string>Keyword: zj
+
+Lists Zellij sessions (zellij list-sessions --no-formatting): current, running and EXITED (resurrectable). Subtitle shows state and age.
+
+↩  attach in iTerm (zellij attach &lt;name&gt;; resurrects EXITED sessions)
+   Typing a name that does not exist offers "New session '&lt;name&gt;'" (zellij attach -c &lt;name&gt;)
+   With no sessions, ↩ starts an auto-named session
+⌥↩ remove: kill-session for running sessions, delete-session for EXITED ones; result shown as a notification
+⌘C copy session name
+
+zellij path: /opt/homebrew/bin/zellij
+Tests: /usr/bin/python3 -B -m unittest test_zj</string>
+	<key>uidata</key>
+	<dict>
+		<key>3F4791F0-1462-4F1C-A45C-51C9F191A875</key>
+		<dict>
+			<key>xpos</key>
+			<integer>50</integer>
+			<key>ypos</key>
+			<integer>120</integer>
+		</dict>
+		<key>93185EC0-C2FA-4BE3-89E8-182C3FEB75B7</key>
+		<dict>
+			<key>xpos</key>
+			<integer>320</integer>
+			<key>ypos</key>
+			<integer>190</integer>
+		</dict>
+		<key>EED2FFBF-4435-48F1-BDB5-7EE40C6592C5</key>
+		<dict>
+			<key>xpos</key>
+			<integer>320</integer>
+			<key>ypos</key>
+			<integer>50</integer>
+		</dict>
+		<key>F55350D7-B0E4-437D-9B89-2009B9CFD8E2</key>
+		<dict>
+			<key>xpos</key>
+			<integer>540</integer>
+			<key>ypos</key>
+			<integer>190</integer>
+		</dict>
+	</dict>
+	<key>version</key>
+	<string>1.0.0</string>
+	<key>webaddress</key>
+	<string>https://github.com/ndcorder/alfred-zellij-sessions</string>
+</dict>
+</plist>
