@@ -1,6 +1,6 @@
 # Zellij Sessions for Alfred
 
-List your Zellij sessions from Alfred, attach to one in the terminal, create a new one by name, or kill or delete one.
+List your Zellij sessions from Alfred, attach to one in your terminal, create a new one by name, or kill or delete one.
 
 Running sessions are listed first, then exited ones that Zellij can resurrect. Each row has an icon for its state, so you can see at a glance whether ↩ attaches to a live session, brings back an exited one, or creates a new one.
 
@@ -10,7 +10,7 @@ Type `zj` and part of a session name.
 
 | Key | Action |
 |---|---|
-| ↩ | Attach to the session in the terminal (exited sessions are resurrected) |
+| ↩ | Attach to the session in your terminal (Alfred's Terminal setting). Exited sessions are resurrected. |
 | ⌥ ↩ | Kill a running session, or delete an exited one |
 | ⌘ C | Copy the session name |
 
@@ -28,8 +28,8 @@ There is nothing to configure.
 
 - macOS with Alfred 5 and the Powerpack
 - `/usr/bin/python3` (installed with the Xcode Command Line Tools)
-- Zellij at `/opt/homebrew/bin/zellij` (`brew install zellij` on Apple silicon). Tested with Zellij 0.45.1.
-- Terminal actions use Alfred's Terminal setting.
+- Zellij, tested with 0.45.1. Alfred does not use your shell's PATH, so the workflow uses the first `zellij` it finds in `/opt/homebrew/bin`, `/usr/local/bin`, `~/.cargo/bin` and `~/.local/bin`, in that order.
+- Terminal actions use the app chosen in Alfred's Terminal setting (Terminal, iTerm or a custom script).
 
 ## Icons
 

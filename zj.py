@@ -114,7 +114,7 @@ def new_item(name):
     return {
         "title": "New session '%s'" % name,
         "icon": icon("new"),
-        "subtitle": "Create and attach in iTerm",
+        "subtitle": "Create and attach in your terminal",
         "arg": attach_cmd(name, create=True),
         "autocomplete": name,
         "mods": {"alt": {"valid": False, "subtitle": "Session does not exist yet"}},

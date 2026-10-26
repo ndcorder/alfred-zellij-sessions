@@ -48,7 +48,7 @@
 	<key>createdby</key>
 	<string>Nicolas Corder</string>
 	<key>description</key>
-	<string>Attach, create, kill or delete Zellij sessions in iTerm</string>
+	<string>Attach, create, kill or delete Zellij sessions in your terminal (Alfred's Terminal setting)</string>
 	<key>disabled</key>
 	<false/>
 	<key>name</key>
@@ -167,13 +167,13 @@
 
 Lists Zellij sessions (zellij list-sessions --no-formatting): current, running and EXITED (resurrectable). Subtitle shows state and age.
 
-↩  attach in iTerm (zellij attach &lt;name&gt;; resurrects EXITED sessions)
+↩  attach in your terminal (Alfred's Terminal setting): zellij attach &lt;name&gt;; resurrects EXITED sessions
    Typing a name that does not exist offers "New session '&lt;name&gt;'" (zellij attach -c &lt;name&gt;)
    With no sessions, ↩ starts an auto-named session
 ⌥↩ remove: kill-session for running sessions, delete-session for EXITED ones; result shown as a notification
 ⌘C copy session name
 
-zellij path: /opt/homebrew/bin/zellij
+zellij: the first one found in /opt/homebrew/bin, /usr/local/bin, ~/.cargo/bin, ~/.local/bin
 Tests: /usr/bin/python3 -B -m unittest test_zj</string>
 	<key>uidata</key>
 	<dict>
