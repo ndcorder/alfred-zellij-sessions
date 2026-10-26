@@ -18,16 +18,18 @@ LS = (
 )
 
 
+def setUpModule():
+    # Tests must not depend on where, or whether, zellij is installed on this machine.
+    p = mock.patch.object(zj, "ZELLIJ", "/opt/homebrew/bin/zellij")
+    p.start()
+    unittest.addModuleCleanup(p.stop)
+
+
 def proc(stdout="", stderr="", rc=0):
     return subprocess.CompletedProcess([], rc, stdout, stderr)
 
 
 class Base(unittest.TestCase):
-    def setUp(self):
-        p = mock.patch.object(zj.os, "access", return_value=True)
-        p.start()
-        self.addCleanup(p.stop)
-
     def items(self, query, ls=proc(LS)):
         with mock.patch.object(zj.subprocess, "run", return_value=ls) as run:
             out = zj.filter_items(query)
@@ -110,13 +112,41 @@ class ScriptFilter(Base):
             items = zj.filter_items("")
         self.assertIn("timed out", items[0]["title"])
 
-    def test_missing_zellij(self):
-        with mock.patch.object(zj.os, "access", return_value=False), \
-                mock.patch.object(zj.subprocess, "run") as run:
+    def test_missing_zellij_says_where_it_looked(self):
+        with mock.patch.object(zj, "ZELLIJ", None), mock.patch.object(zj.subprocess, "run") as run:
             items = zj.filter_items("x")
         run.assert_not_called()
+        self.assertEqual(len(items), 1)
         self.assertEqual(items[0]["title"], "zellij not found")
+        self.assertIn("Looked in /opt/homebrew/bin, /usr/local/bin, ~/.cargo/bin, ~/.local/bin",
+                      items[0]["subtitle"])
         self.assertFalse(items[0]["valid"])
+
+
+class Discovery(unittest.TestCase):
+    """Alfred's PATH has none of these folders, so the workflow searches them itself."""
+
+    HOME = os.path.expanduser("~")
+    ORDER = ["/opt/homebrew/bin/zellij", "/usr/local/bin/zellij",
+             HOME + "/.cargo/bin/zellij", HOME + "/.local/bin/zellij"]
+
+    def find(self, files, executable):
+        with mock.patch.object(zj.os.path, "isfile", side_effect=lambda p: p in files), \
+                mock.patch.object(zj.os, "access", side_effect=lambda p, mode: p in executable):
+            return zj.find_zellij()
+
+    def test_first_executable_in_search_order_wins(self):
+        # Apple silicon Homebrew, Intel Homebrew, cargo install, ~/.local/bin.
+        for i, path in enumerate(self.ORDER):
+            later = set(self.ORDER[i:])
+            self.assertEqual(self.find(later, later), path)
+
+    def test_non_executable_file_is_skipped(self):
+        everything = set(self.ORDER)
+        self.assertEqual(self.find(everything, {self.ORDER[2]}), self.ORDER[2])
+
+    def test_nothing_found(self):
+        self.assertIsNone(self.find(set(), set()))
 
 
 class Remove(unittest.TestCase):
@@ -166,7 +196,7 @@ class Icons(Base):
         self.assertEqual(self.items("", ls=proc(stderr="boom", rc=2))[0]["icon"]["path"], "icons/error.png")
         with mock.patch.object(zj.subprocess, "run", side_effect=subprocess.TimeoutExpired("z", 5)):
             self.assertEqual(zj.filter_items("")[0]["icon"]["path"], "icons/warning.png")
-        with mock.patch.object(zj.os, "access", return_value=False):
+        with mock.patch.object(zj, "ZELLIJ", None):
             self.assertEqual(zj.filter_items("")[0]["icon"]["path"], "icons/error.png")
         out = io.StringIO()
         with mock.patch.object(zj, "filter_items", side_effect=RuntimeError("x")), \

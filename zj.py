@@ -11,13 +11,26 @@ import shlex
 import subprocess
 import sys
 
-ZELLIJ = "/opt/homebrew/bin/zellij"
+# Alfred's PATH has none of these, so look in each install location; the first executable wins:
+# Homebrew (Apple silicon, then Intel), cargo install, then other per-user installs.
+ZELLIJ_DIRS = ("/opt/homebrew/bin", "/usr/local/bin", "~/.cargo/bin", "~/.local/bin")
 TIMEOUT = 5
 ANSI = re.compile(r"\x1b\[[0-9;]*m")
 # "name [Created 5months 18days 17h 29m 58s ago] (EXITED - attach to resurrect)"
 LINE = re.compile(r"^(?P<name>.+?) \[Created (?P<age>.+?) ago\](?: \((?P<tag>[^)]*)\))?\s*$")
 # Session state -> pre-rendered icon (make_icons.py). "active" = running, not attached here.
 STATE_ICONS = {"active": "running", "current": "current", "exited": "exited"}
+
+
+def find_zellij():
+    for d in ZELLIJ_DIRS:
+        path = os.path.join(os.path.expanduser(d), "zellij")
+        if os.path.isfile(path) and os.access(path, os.X_OK):
+            return path
+    return None
+
+
+ZELLIJ = find_zellij()  # once per run: Alfred starts the script fresh for every query
 
 
 def icon(name):
@@ -50,8 +63,9 @@ def short_age(age):
 
 def list_sessions():
     """Return (sessions, error_item_or_None)."""
-    if not os.access(ZELLIJ, os.X_OK):
-        return [], {"title": "zellij not found", "subtitle": "Expected %s · brew install zellij" % ZELLIJ,
+    if not ZELLIJ:
+        return [], {"title": "zellij not found",
+                    "subtitle": "Looked in %s · brew install zellij" % ", ".join(ZELLIJ_DIRS),
                     "valid": False, "icon": icon("error")}
     try:
         p = run(["list-sessions", "--no-formatting"])
@@ -136,6 +150,8 @@ def filter_items(query):
 def remove(state, name):
     """Kill a running session or delete an exited one. Returns the notification text."""
     sub = "delete-session" if state == "exited" else "kill-session"
+    if not ZELLIJ:
+        return "Failed to %s '%s': zellij not found" % (sub, name)
     try:
         p = run([sub, name])
     except (OSError, subprocess.TimeoutExpired) as e:
